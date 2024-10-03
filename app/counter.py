@@ -1,18 +1,17 @@
-import re
+import setup
 from psycopg import connection
 import psycopg
 from psycopg.rows import TupleRow
-import pg
 import logging
 
 logger = logging.getLogger()
 
 def get_counts_for_page(page_id: str) -> TupleRow | None:
   with psycopg.connect(
-      host='localhost',
-      port=5432,
-      user='postgres',
-      password='postgres',
+      host=setup.PG_HOST,
+      port=setup.PG_PORT,
+      user=setup.PG_USER,
+      password=setup.PG_PASSWORD,
     ) as connection:
     cursor = connection.cursor()
     cursor.execute("SELECT count FROM views WHERE page_id = %s", (page_id,))
@@ -21,10 +20,10 @@ def get_counts_for_page(page_id: str) -> TupleRow | None:
 
 def increase_count_for_page(page_id: str) -> TupleRow | None:
   with psycopg.connect(
-      host='localhost',
-      port=5432,
-      user='postgres',
-      password='postgres',
+      host=setup.PG_HOST,
+      port=setup.PG_PORT,
+      user=setup.PG_USER,
+      password=setup.PG_PASSWORD,
     ) as connection:
     cursor = connection.cursor()
     result = cursor.execute("UPDATE views SET count = count + 1 WHERE page_id = %s", (page_id,))
@@ -38,10 +37,10 @@ def increase_count_for_page(page_id: str) -> TupleRow | None:
 
 def create_page(page_id: str) -> TupleRow | None:
   with psycopg.connect(
-    host='localhost',
-    port=5432,
-    user='postgres',
-    password='postgres',
+    host=setup.PG_HOST,
+    port=setup.PG_PORT,
+    user=setup.PG_USER,
+    password=setup.PG_PASSWORD,
   ) as connection:
     try:
       cursor = connection.cursor()
@@ -56,10 +55,10 @@ def create_page(page_id: str) -> TupleRow | None:
 
 def create_views_table():
   with psycopg.connect(
-    host='localhost',
-    port=5432,
-    user='postgres',
-    password='postgres',
+    host=setup.PG_HOST,
+    port=setup.PG_PORT,
+    user=setup.PG_USER,
+    password=setup.PG_PASSWORD,
   ) as connection:
     cursor = connection.cursor()
     cursor.execute("""

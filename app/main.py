@@ -1,5 +1,4 @@
 import setup
-import pg
 import typer
 import counter
 import logging
@@ -28,9 +27,9 @@ def add_page_view(page_id: str):
   if count is None:
     logger.warning(f"Page {page_id} does not exist")
     exit(1)
-  logger.info(f"Page {page_id} viewed {count} times")
+  logger.info(f"Page {page_id} already viewed {count[0]} times")
   counter.increase_count_for_page(page_id)
-  logger.info(f"Increased {page_id} view count")
+  logger.info(f"Increased {page_id} view count to {count[0] + 1}")
 
 @app.command()
 def get_counts_for_page(page_id: str):
@@ -38,7 +37,7 @@ def get_counts_for_page(page_id: str):
   if count is None:
     logger.warning(f"Page {page_id} does not exist")
     exit(1)
-  logger.info(f"Page {page_id} viewed {count} times")
+  logger.info(f"Page {page_id} viewed {count[0]} times")
   return count
 
 if __name__ == "__main__":
