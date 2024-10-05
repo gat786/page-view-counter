@@ -1,5 +1,6 @@
 import setup
 import typer
+import json
 import counter
 import logging
 
@@ -39,6 +40,28 @@ def get_counts_for_page(page_id: str):
     exit(1)
   logger.info(f"Page {page_id} viewed {count[0]} times")
   return count
+
+def lambda_handler(event, context):
+  body = {}
+  if "requestContext" in event:
+    requestContext = event["requestContext"]
+    if "http" in requestContext:
+      http = requestContext["http"]
+      if "method" in http:
+        method = http["method"]
+        if method == "POST":
+          body = json.loads(event["body"])
+  print("Body: ", body)
+  if "method" in body and "url" in body:
+    method = body["method"]
+    if "host" in body:
+      host = body["host"]
+      print("We are getting calls from host: ", host)
+    if method == "add-view":
+      print("We will add a page view to this url: ", body["url"])
+    if method == "get-view":
+      print("We will get the views for this url: ", body["url"])
+  return
 
 if __name__ == "__main__":
   app()
