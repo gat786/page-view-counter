@@ -1,0 +1,6 @@
+{
+  "url": "/blogs/github/example-page",
+  "host": "localhost:5173",
+  "website": "https://devops-stuff.dev",
+  "method": "get-view"
+}
