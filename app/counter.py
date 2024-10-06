@@ -7,16 +7,20 @@ import logging
 logger = logging.getLogger()
 
 def get_counts_for_page(page_id: str) -> TupleRow | None:
-  with psycopg.connect(
-      host=setup.PG_HOST,
-      port=setup.PG_PORT,
-      user=setup.PG_USER,
-      password=setup.PG_PASSWORD,
-    ) as connection:
-    cursor = connection.cursor()
-    cursor.execute("SELECT count FROM views WHERE page_id = %s", (page_id,))
-    record = cursor.fetchone()
-    return record if record else None
+  try:
+    with psycopg.connect(
+        host=setup.PG_HOST,
+        port=setup.PG_PORT,
+        user=setup.PG_USER,
+        password=setup.PG_PASSWORD,
+      ) as connection:
+      cursor = connection.cursor()
+      cursor.execute("SELECT count FROM views WHERE page_id = %s", (page_id,))
+      record = cursor.fetchone()
+      return record if record else None
+  except psycopg.errors.UndefinedTable:
+    logger.warning("Table does not exist")
+    return None
 
 def increase_count_for_page(page_id: str) -> TupleRow | None:
   with psycopg.connect(
@@ -49,6 +53,9 @@ def create_page(page_id: str) -> TupleRow | None:
       records = cursor.execute("SELECT * FROM views WHERE page_id = %s", (page_id,))
       page_record = records.fetchone()
       return page_record
+    except psycopg.errors.UndefinedTable:
+      logger.warning("Table does not exist")
+      return None
     except psycopg.errors.UniqueViolation:
       logger.warning(f"Page {page_id} already exists")
       return None

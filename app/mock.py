@@ -2,6 +2,7 @@ import setup
 import glob
 import logging
 import json
+import typer
 
 import main
 
@@ -13,15 +14,19 @@ event_json_format = {
   },
 }
 
+app = typer.Typer()
 logger = logging.getLogger()
 
+@app.command()
 def mock():
-  # mock_create_pageview()
-  # mock_add_pageview()
-  mock_get_pageview()
+  create_pageview()
+  add_pageview()
+  get_pageview()
   return
 
-def mock_create_pageview():
+@app.command()
+def create_pageview():
+  
   create_events_files = glob.glob("app/events/create-page-views/*.json")
   for event_file in create_events_files:
     event = event_json_format.copy()
@@ -31,7 +36,8 @@ def mock_create_pageview():
       main.lambda_handler(event, None)
   return 
 
-def mock_add_pageview():
+@app.command()
+def add_pageview():
   add_event_files     = glob.glob("app/events/add-views/*.json")
   for event_file in add_event_files:
     event = event_json_format.copy()
@@ -41,7 +47,8 @@ def mock_add_pageview():
       main.lambda_handler(event, None)
   return 
 
-def mock_get_pageview():
+@app.command()
+def get_pageview():
   get_event_files     = glob.glob("app/events/get-views/*.json")
   for event_file in get_event_files:
     event = event_json_format.copy()
@@ -53,4 +60,4 @@ def mock_get_pageview():
 
 
 if __name__ == "__main__":
-  mock()
+  app()
