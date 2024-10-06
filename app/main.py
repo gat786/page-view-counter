@@ -97,7 +97,7 @@ def get_counts_for_page(page_id: str) -> dict:
   }
 
 def lambda_handler(event, context):
-  logger.info("Executing lambda function for event: ", event)
+  logger.info(f"Executing lambda function for event: {event}",)
   body = {}
   if "requestContext" in event:
     requestContext = event["requestContext"]
