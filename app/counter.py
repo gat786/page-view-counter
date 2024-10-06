@@ -1,5 +1,6 @@
 import setup
-import pg8000
+from pg8000 import dbapi
+from pg8000 import exceptions
 # from aws_lambda_powertools import Logger
 import logging
 
@@ -7,7 +8,8 @@ logger = logging.getLogger()
 
 def get_counts_for_page(page_id: str) -> tuple | None:
   try:
-    conn = pg8000.connect(
+    
+    conn = dbapi.connect(
       host=setup.PG_HOST,
       port=setup.PG_PORT,
       user=setup.PG_USER,
@@ -19,7 +21,7 @@ def get_counts_for_page(page_id: str) -> tuple | None:
     record = cursor.fetchone()
     conn.close()
     return record if record else None
-  except pg8000.ProgrammingError as e:
+  except Exception as e:
     if "relation" in str(e) and "does not exist" in str(e):
       logger.warning("Table does not exist")
     else:
@@ -27,7 +29,7 @@ def get_counts_for_page(page_id: str) -> tuple | None:
     return None
 
 def increase_count_for_page(page_id: str) -> tuple | None:
-  conn = pg8000.connect(
+  conn = dbapi.connect(
     host=setup.PG_HOST,
     port=setup.PG_PORT,
     user=setup.PG_USER,
@@ -47,7 +49,7 @@ def increase_count_for_page(page_id: str) -> tuple | None:
   return page_record
 
 def create_page(page_id: str) -> tuple | None:
-  conn = pg8000.connect(
+  conn = dbapi.connect(
     host=setup.PG_HOST,
     port=setup.PG_PORT,
     user=setup.PG_USER,
@@ -62,7 +64,7 @@ def create_page(page_id: str) -> tuple | None:
     page_record = cursor.fetchone()
     conn.close()
     return page_record
-  except pg8000.ProgrammingError as e:
+  except Exception as e:
     if "relation" in str(e) and "does not exist" in str(e):
       logger.warning("Table does not exist")
     elif "duplicate key value" in str(e):
@@ -73,7 +75,7 @@ def create_page(page_id: str) -> tuple | None:
     return None
 
 def create_views_table():
-  conn = pg8000.connect(
+  conn = dbapi.connect(
     host=setup.PG_HOST,
     port=setup.PG_PORT,
     user=setup.PG_USER,
