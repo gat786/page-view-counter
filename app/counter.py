@@ -1,78 +1,90 @@
 import setup
-from psycopg import connection
-import psycopg
-from psycopg.rows import TupleRow
+import pg8000
 import logging
 
 logger = logging.getLogger()
 
-def get_counts_for_page(page_id: str) -> TupleRow | None:
-  try:
-    with psycopg.connect(
+def get_counts_for_page(page_id: str) -> tuple | None:
+    try:
+        conn = pg8000.connect(
+            host=setup.PG_HOST,
+            port=setup.PG_PORT,
+            user=setup.PG_USER,
+            password=setup.PG_PASSWORD,
+            database=setup.PG_DATABASE  # Make sure to add this
+        )
+        cursor = conn.cursor()
+        cursor.execute("SELECT count FROM views WHERE page_id = %s", (page_id,))
+        record = cursor.fetchone()
+        conn.close()
+        return record if record else None
+    except pg8000.ProgrammingError as e:
+        if "relation" in str(e) and "does not exist" in str(e):
+            logger.warning("Table does not exist")
+        else:
+            logger.error(f"An error occurred: {e}")
+        return None
+
+def increase_count_for_page(page_id: str) -> tuple | None:
+    conn = pg8000.connect(
         host=setup.PG_HOST,
         port=setup.PG_PORT,
         user=setup.PG_USER,
         password=setup.PG_PASSWORD,
-      ) as connection:
-      cursor = connection.cursor()
-      cursor.execute("SELECT count FROM views WHERE page_id = %s", (page_id,))
-      record = cursor.fetchone()
-      return record if record else None
-  except psycopg.errors.UndefinedTable:
-    logger.warning("Table does not exist")
-    return None
-
-def increase_count_for_page(page_id: str) -> TupleRow | None:
-  with psycopg.connect(
-      host=setup.PG_HOST,
-      port=setup.PG_PORT,
-      user=setup.PG_USER,
-      password=setup.PG_PASSWORD,
-    ) as connection:
-    cursor = connection.cursor()
-    result = cursor.execute("UPDATE views SET count = count + 1 WHERE page_id = %s", (page_id,))
-    if result.rowcount == 0:
-      logger.warning(f"Page {page_id} does not exist")
-      return None
-    result = cursor.execute("SELECT * FROM views WHERE page_id = %s", (page_id,))
-    page_record = result.fetchone()
-    connection.commit()
+        database=setup.PG_DATABASE
+    )
+    cursor = conn.cursor()
+    cursor.execute("UPDATE views SET count = count + 1 WHERE page_id = %s", (page_id,))
+    if cursor.rowcount == 0:
+        logger.warning(f"Page {page_id} does not exist")
+        conn.close()
+        return None
+    cursor.execute("SELECT * FROM views WHERE page_id = %s", (page_id,))
+    page_record = cursor.fetchone()
+    conn.commit()
+    conn.close()
     return page_record
 
-def create_page(page_id: str) -> TupleRow | None:
-  with psycopg.connect(
-    host=setup.PG_HOST,
-    port=setup.PG_PORT,
-    user=setup.PG_USER,
-    password=setup.PG_PASSWORD,
-  ) as connection:
+def create_page(page_id: str) -> tuple | None:
+    conn = pg8000.connect(
+        host=setup.PG_HOST,
+        port=setup.PG_PORT,
+        user=setup.PG_USER,
+        password=setup.PG_PASSWORD,
+        database=setup.PG_DATABASE
+    )
     try:
-      cursor = connection.cursor()
-      cursor.execute("INSERT INTO views (page_id) VALUES (%s)", (page_id,))
-      connection.commit()
-      records = cursor.execute("SELECT * FROM views WHERE page_id = %s", (page_id,))
-      page_record = records.fetchone()
-      return page_record
-    except psycopg.errors.UndefinedTable:
-      logger.warning("Table does not exist")
-      return None
-    except psycopg.errors.UniqueViolation:
-      logger.warning(f"Page {page_id} already exists")
-      return None
+        cursor = conn.cursor()
+        cursor.execute("INSERT INTO views (page_id) VALUES (%s)", (page_id,))
+        conn.commit()
+        cursor.execute("SELECT * FROM views WHERE page_id = %s", (page_id,))
+        page_record = cursor.fetchone()
+        conn.close()
+        return page_record
+    except pg8000.ProgrammingError as e:
+        if "relation" in str(e) and "does not exist" in str(e):
+            logger.warning("Table does not exist")
+        elif "duplicate key value" in str(e):
+            logger.warning(f"Page {page_id} already exists")
+        else:
+            logger.error(f"An error occurred: {e}")
+        conn.close()
+        return None
 
 def create_views_table():
-  with psycopg.connect(
-    host=setup.PG_HOST,
-    port=setup.PG_PORT,
-    user=setup.PG_USER,
-    password=setup.PG_PASSWORD,
-  ) as connection:
-    cursor = connection.cursor()
+    conn = pg8000.connect(
+        host=setup.PG_HOST,
+        port=setup.PG_PORT,
+        user=setup.PG_USER,
+        password=setup.PG_PASSWORD,
+        database=setup.PG_DATABASE
+    )
+    cursor = conn.cursor()
     cursor.execute("""
-      CREATE TABLE IF NOT EXISTS views (
-        page_id VARCHAR(255) NOT NULL PRIMARY KEY,
-        count INT NOT NULL DEFAULT 0
-      )
+        CREATE TABLE IF NOT EXISTS views (
+            page_id VARCHAR(255) NOT NULL PRIMARY KEY,
+            count INT NOT NULL DEFAULT 0
+        )
     """)
-    connection.commit()
-    
+    conn.commit()
+    conn.close()
