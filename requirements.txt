@@ -1,5 +1,7 @@
 asn1crypto==1.5.1
+aws-lambda-powertools==3.0.0
 click==8.1.7
+jmespath==1.0.1
 markdown-it-py==3.0.0
 mdurl==0.1.2
 pg8000==1.31.2
