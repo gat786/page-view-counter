@@ -107,7 +107,7 @@ def lambda_handler(event, context):
         method = http["method"]
         if method == "POST":
           body = json.loads(event["body"])
-  logger.debug("Body: ", body)
+  logger.debug(f"Body: {body}")
   response = {}
   if "method" in body and "url" in body:
     method = body["method"]
@@ -120,20 +120,20 @@ def lambda_handler(event, context):
       exit(1)
     if "website" in body:
       website = body["website"]
-      logger.debug("We are getting calls from host: ", host)
+      logger.debug(f"We are getting calls from host: {host}")
     else:
       logger.warning("No website provided, exiting function")
       exit(1)
     if method == "add-view":
-      logger.debug("We will add a page view to this url: ", body["url"])
+      logger.debug(f"We will add a page view to this url: {body["url"]}")
       complete_url = f"{website}{body['url']}"
       response = add_page_view(complete_url)
     if method == "get-view":
-      logger.debug("We will get the views for this url: ", body["url"])
+      logger.debug(f"We will get the views for this url: {body["url"]}")
       complete_url = f"{website}{body['url']}"
       response = get_counts_for_page(complete_url)
     if method == "create-page-view":
-      logger.debug("We will create the views for this url: ", body["url"])
+      logger.debug(f"We will create the views for this url: {body["url"]}")
       complete_url = f"{website}{body['url']}"
       response = create_page(complete_url)
   return {

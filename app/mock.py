@@ -44,7 +44,7 @@ def add_pageview():
     event = event_json_format.copy()
     with open(event_file, "r") as fp: 
       event["body"] = json.dumps(json.loads(fp.read()))
-      logger.info("Event: %s", event)
+      logger.info(f"Event: {event}")
       main.lambda_handler(event, None)
   return 
 
@@ -55,7 +55,7 @@ def get_pageview():
     event = event_json_format.copy()
     with open(event_file, "r") as fp: 
       event["body"] = json.dumps(json.loads(fp.read()))
-      logger.info("Event: %s", event)
+      logger.info(f"Event: {event}")
       main.lambda_handler(event, None)
   return
 
