@@ -106,6 +106,7 @@ def lambda_handler(event, context):
         if method == "POST":
           body = json.loads(event["body"])
   logger.debug("Body: ", body)
+  response = {}
   if "method" in body and "url" in body:
     method = body["method"]
     host    = ""
