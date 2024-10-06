@@ -2,7 +2,8 @@ import setup
 import glob
 import json
 import typer
-from aws_lambda_powertools import Logger
+# from aws_lambda_powertools import Logger
+import logging
 
 import main
 
@@ -15,7 +16,7 @@ event_json_format = {
 }
 
 app = typer.Typer()
-logger = Logger()
+logger = logging.getLogger()
 
 @app.command()
 def mock():

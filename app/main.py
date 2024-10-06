@@ -2,10 +2,10 @@ import setup
 import typer
 import json
 import counter
-from aws_lambda_powertools import Logger
+import logging
 
 app     = typer.Typer()
-logger  = Logger()
+logger  = logging.getLogger()
 
 @app.command()
 def create_views_table():
