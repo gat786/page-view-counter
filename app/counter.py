@@ -1,8 +1,8 @@
 import setup
 import pg8000
-import logging
+from aws_lambda_powertools import Logger
 
-logger = logging.getLogger()
+logger = Logger()
 
 def get_counts_for_page(page_id: str) -> tuple | None:
     try:
