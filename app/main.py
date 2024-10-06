@@ -11,6 +11,7 @@ logger.setLevel(logging.DEBUG)
 @app.command()
 def create_views_table():
   try:
+    logger.info("Creating table")
     counter.create_views_table()
     logger.info("Table created")
   except Exception as e:
