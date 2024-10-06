@@ -28,7 +28,7 @@ jobs:
           python -m pip install -r requirements.txt -t app/
       - name: create zip
         working-directory: app
-        run:
+        run: |
           zip -r lambda.zip .
           cp lambda.zip ../
       - name: upload lambda code
