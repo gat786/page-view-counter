@@ -18,11 +18,11 @@ logger.addHandler(stream_handler)
 #   datefmt='%Y-%m-%d %H:%M:%S'
 # )
 
-PG_PASSWORD = os.getenv('PG_PASSWORD')
-PG_USER     = os.getenv('PG_USER')
-PG_HOST     = os.getenv('PG_HOST')
-PG_PORT     = os.getenv('PG_PORT')
-PG_DATABASE = os.getenv('PG_DATABASE', "postgres")
+PG_PASSWORD   = os.getenv('PG_PASSWORD')
+PG_USER       = os.getenv('PG_USER')
+PG_HOST: str  = os.getenv('PG_HOST', "127.0.0.1")
+PG_PORT: str  = os.getenv('PG_PORT', "5432")
+PG_DATABASE   = os.getenv('PG_DATABASE', "postgres")
 
 
 print({PG_PASSWORD, PG_USER, PG_HOST, PG_PORT, PG_DATABASE})

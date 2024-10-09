@@ -11,7 +11,7 @@ def get_counts_for_page(page_id: str) -> tuple | None:
     
     conn = dbapi.connect(
       host=setup.PG_HOST,
-      port=setup.PG_PORT,
+      port=int(setup.PG_PORT),
       user=setup.PG_USER,
       password=setup.PG_PASSWORD,
       database=setup.PG_DATABASE  # Make sure to add this
@@ -31,7 +31,7 @@ def get_counts_for_page(page_id: str) -> tuple | None:
 def increase_count_for_page(page_id: str) -> tuple | None:
   conn = dbapi.connect(
     host=setup.PG_HOST,
-    port=setup.PG_PORT,
+    port=int(setup.PG_PORT),
     user=setup.PG_USER,
     password=setup.PG_PASSWORD,
     database=setup.PG_DATABASE
@@ -51,7 +51,7 @@ def increase_count_for_page(page_id: str) -> tuple | None:
 def create_page(page_id: str) -> tuple | None:
   conn = dbapi.connect(
     host=setup.PG_HOST,
-    port=setup.PG_PORT,
+    port=int(setup.PG_PORT),
     user=setup.PG_USER,
     password=setup.PG_PASSWORD,
     database=setup.PG_DATABASE
@@ -77,7 +77,7 @@ def create_page(page_id: str) -> tuple | None:
 def create_views_table():
   conn = dbapi.connect(
     host=setup.PG_HOST,
-    port=setup.PG_PORT,
+    port=int(setup.PG_PORT),
     user=setup.PG_USER,
     password=setup.PG_PASSWORD,
     database=setup.PG_DATABASE
