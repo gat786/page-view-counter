@@ -2,10 +2,13 @@
 # The workflow Creates static website using aws s3
 name: AWS example workflow
 on:
-  push
+  workflow_dispatch:
+  push:
+    branches:
+      - main
 env:
   AWS_ACCOUNT_ID: "932207385252"
-  AWS_REGION : "us-east-1"
+  AWS_REGION : "ap-south-1"
   AWS_LAMBDA_FUNCTION_NAME: "lambda_function_name"
 # permission can be added at job level or workflow level    
 permissions:

@@ -3,6 +3,7 @@ import typer
 import json
 import counter
 import logging
+import secrets_private
 
 app     = typer.Typer()
 logger  = logging.getLogger()
@@ -95,6 +96,7 @@ def get_counts_for_page(page_id: str) -> dict:
     "page_id": page_id,
     "count": count[0]
   }
+
 
 def lambda_handler(event, context):
   logger.info(f"Executing lambda function for event: {event}",)

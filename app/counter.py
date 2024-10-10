@@ -1,5 +1,6 @@
 import setup
 from pg8000 import dbapi
+import secrets_private
 from pg8000 import exceptions
 # from aws_lambda_powertools import Logger
 import logging
@@ -13,7 +14,7 @@ def get_counts_for_page(page_id: str) -> tuple | None:
       host=setup.PG_HOST,
       port=int(setup.PG_PORT),
       user=setup.PG_USER,
-      password=setup.PG_PASSWORD,
+      password=secrets_private.get_postgres_password(),
       database=setup.PG_DATABASE  # Make sure to add this
     )
     cursor = conn.cursor()
@@ -34,7 +35,7 @@ def increase_count_for_page(page_id: str) -> tuple | None:
     host=setup.PG_HOST,
     port=int(setup.PG_PORT),
     user=setup.PG_USER,
-    password=setup.PG_PASSWORD,
+    password=secrets_private.get_postgres_password(),
     database=setup.PG_DATABASE
   )
   cursor = conn.cursor()
@@ -54,7 +55,7 @@ def create_page(page_id: str) -> tuple | None:
     host=setup.PG_HOST,
     port=int(setup.PG_PORT),
     user=setup.PG_USER,
-    password=setup.PG_PASSWORD,
+    password=secrets_private.get_postgres_password(),
     database=setup.PG_DATABASE
   )
   try:
@@ -81,7 +82,7 @@ def create_views_table():
       host=setup.PG_HOST,
       port=int(setup.PG_PORT),
       user=setup.PG_USER,
-      password=setup.PG_PASSWORD,
+      password=secrets_private.get_postgres_password(),
       database=setup.PG_DATABASE
     )
     logger.info(f"Creating table with connection: {conn}")
