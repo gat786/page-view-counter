@@ -1,3 +1,4 @@
+import re
 import setup
 import typer
 import json
@@ -108,7 +109,18 @@ def lambda_handler(event, context):
       if "method" in http:
         method = http["method"]
         if method == "POST":
-          body = json.loads(event["body"])
+          if "body" in event:
+            body = json.loads(event["body"])
+          else:
+            return {
+              "statusCode": 400,
+              "body": json.dumps("No body provided")
+            }
+        else:
+          return {
+            "statusCode": 405,
+            "body": json.dumps("Method not allowed")
+          }
   logger.debug(f"Body: {body}")
   response = {}
   if "method" in body and "url" in body:
