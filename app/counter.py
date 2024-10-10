@@ -22,6 +22,7 @@ def get_counts_for_page(page_id: str) -> tuple | None:
     conn.close()
     return record if record else None
   except Exception as e:
+    logger.error(f"An error occurred: {e}")
     if "relation" in str(e) and "does not exist" in str(e):
       logger.warning("Table does not exist")
     else:
@@ -75,20 +76,24 @@ def create_page(page_id: str) -> tuple | None:
     return None
 
 def create_views_table():
-  conn = dbapi.connect(
-    host=setup.PG_HOST,
-    port=int(setup.PG_PORT),
-    user=setup.PG_USER,
-    password=setup.PG_PASSWORD,
-    database=setup.PG_DATABASE
-  )
-  logger.info(f"Creating table with connection: {conn}")
-  cursor = conn.cursor()
-  cursor.execute("""
-    CREATE TABLE IF NOT EXISTS views (
-        page_id VARCHAR(255) NOT NULL PRIMARY KEY,
-        count INT NOT NULL DEFAULT 0
+  try:
+    conn = dbapi.connect(
+      host=setup.PG_HOST,
+      port=int(setup.PG_PORT),
+      user=setup.PG_USER,
+      password=setup.PG_PASSWORD,
+      database=setup.PG_DATABASE
     )
-  """)
-  conn.commit()
-  conn.close()
+    logger.info(f"Creating table with connection: {conn}")
+    cursor = conn.cursor()
+    cursor.execute("""
+      CREATE TABLE IF NOT EXISTS views (
+          page_id VARCHAR(255) NOT NULL PRIMARY KEY,
+          count INT NOT NULL DEFAULT 0
+      )
+    """)
+    conn.commit()
+    conn.close()
+  except Exception as e:
+    logger.error(f"An error occurred: {e}")
+    return None

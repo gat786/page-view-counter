@@ -6,7 +6,6 @@ import logging
 
 app     = typer.Typer()
 logger  = logging.getLogger()
-logger.setLevel(logging.INFO)
 
 @app.command()
 def create_views_table():
