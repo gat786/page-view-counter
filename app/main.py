@@ -123,33 +123,33 @@ def lambda_handler(event, context):
           }
   logger.debug(f"Body: {body}")
   response = {}
-  if "method" in body and "url" in body:
-    method = body["method"]
-    host    = ""
-    website = ""
-    if "host" in body:
-      host = body["host"]
-    else:
-      logger.warning("No host provided, exiting function")
-      exit(1)
-    if "website" in body:
-      website = body["website"]
-      logger.debug(f"We are getting calls from host: {host}")
-    else:
-      logger.warning("No website provided, exiting function")
-      exit(1)
-    if method == "add-view":
-      logger.debug(f"We will add a page view to this url: {body["url"]}")
-      complete_url = f"{website}{body['url']}"
-      response = add_page_view(complete_url)
-    if method == "get-view":
-      logger.debug(f"We will get the views for this url: {body["url"]}")
-      complete_url = f"{website}{body['url']}"
-      response = get_counts_for_page(complete_url)
-    if method == "create-page-view":
-      logger.debug(f"We will create the views for this url: {body["url"]}")
-      complete_url = f"{website}{body['url']}"
-      response = create_page(complete_url)
+  required_keys = ["method", "url", "website", "host"]
+  for key in required_keys:
+    if key not in body:
+      return {
+        "statusCode": 400,
+        "body": json.dumps({
+          "message": f"Missing required key: {key}",
+          "keys_required": required_keys
+        })
+      }
+  url     = body["url"]
+  method  = body["method"]
+  host    = body["host"]
+  website = body["website"]
+  logger.info("Received request from host: %s", host)
+  if method == "add-view":
+    logger.debug(f"We will add a page view to this url: {body["url"]}")
+    complete_url = f"{website}{url}"
+    response = add_page_view(complete_url)
+  if method == "get-view":
+    logger.debug(f"We will get the views for this url: {body["url"]}")
+    complete_url = f"{website}{url}"
+    response = get_counts_for_page(complete_url)
+  if method == "create-page-view":
+    logger.debug(f"We will create the views for this url: {body["url"]}")
+    complete_url = f"{website}{url}"
+    response = create_page(complete_url)
   return {
     "statusCode": 200,
     "body": json.dumps(response)
